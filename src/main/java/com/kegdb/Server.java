@@ -1,12 +1,14 @@
 package com.kegdb;
 
-import com.kegdb.resp.RESPObject;
 import com.kegdb.resp.RESPParser;
 import com.kegdb.storage.Keg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
@@ -31,13 +33,10 @@ public class Server {
                 RESPParser respParser = new RESPParser();
                 Keg keg = new Keg();
                 while (true) {
-                    RESPObject respObject = respParser.deserialize(in);
-                    System.out.println(respObject);
-                    RESPObject response = keg.storeOrRetrieve(respObject);
-
+                    var respObject = respParser.deserialize(in);
+                    var response = keg.storeOrRetrieve(respObject);
                     out.write(respParser.serialize(response).getBytes(StandardCharsets.UTF_8));
                     out.flush();
-                    break;
                 }
             }
         } catch (IOException e) {

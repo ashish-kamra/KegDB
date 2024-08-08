@@ -5,28 +5,33 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.kegdb.Constants.CRLF;
+
 public class RESPParser {
 
     public String serialize(RESPObject obj) {
         StringBuilder sb = new StringBuilder();
         switch (obj.RESPDataType) {
             case SIMPLE_STRING:
-                sb.append("+").append(obj.value).append("\r\n");
+                sb.append("+").append(obj.value).append(CRLF);
                 break;
             case ERROR:
-                sb.append("-").append(obj.value).append("\r\n");
+                sb.append("-").append(obj.value).append(CRLF);
                 break;
             case INTEGER:
-                sb.append(":").append(obj.value).append("\r\n");
+                sb.append(":").append(obj.value).append(CRLF);
                 break;
             case BULK_STRING:
                 String str = (String) obj.value;
-                sb.append("$").append(str.length()).append("\r\n");
-                sb.append(str).append("\r\n");
+                sb.append("$").append(str.length()).append(CRLF);
+                sb.append(str).append(CRLF);
+                break;
+            case NULL:
+                sb.append("_").append(CRLF);
                 break;
             case ARRAY:
                 List<RESPObject> list = (List<RESPObject>) obj.value;
-                sb.append("*").append(list.size()).append("\r\n");
+                sb.append("*").append(list.size()).append(CRLF);
                 for (RESPObject item : list) {
                     sb.append(serialize(item));
                 }
